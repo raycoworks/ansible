@@ -1,0 +1,71 @@
+---
+- name: Install PowerShell Core and VMware PowerCLI on Linux
+  hosts: your_target_host_group_or_host
+  become: yes
+
+  tasks:
+    - name: Add Microsoft repository key for Ubuntu/Debian-based systems
+      apt_key:
+        url: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb.asc
+        state: present
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+    - name: Install PowerShell prerequisites on Ubuntu/Debian
+      apt:
+        update_cache: yes
+        name:
+          - apt-transport-https
+          - aspnetcore-runtime-6.0
+
+    - name: Add Microsoft repository for Ubuntu/Debian-based systems
+      get_url:
+        url: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+        dest: /tmp/packages-microsoft-prod.deb
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+    - name: Install Microsoft repository package on Ubuntu/Debian
+      apt:
+        deb: /tmp/packages-microsoft-prod.deb
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+      
+    - name: Update APT cache (for Debian-based systems)
+      apt:
+        update_cache: yes
+
+    - name: Install PowerShell Core on Ubuntu/Debian
+      apt:
+        name:
+          - powershell
+          # Include any other dependencies if required by your system version.
+
+    - name: Add Microsoft repository key for RedHat/CentOS-based systems
+      yum_key:
+        key: https://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm.key
+
+    - name: Install PowerShell prerequisites on RHEL/CentOS 7 and 8
+      package:
+        name:
+          - ca-certificates
+          # Include other dependencies if needed for your system version.
+
+    - name: Add Microsoft repository for RedHat/CentOS-based systems (for CentOS/RHEL 7)
+      get_url:
+        url: https://packages.microsoft.com/config/rhel/7/prod.repo
+        dest: /etc/yum.repos.d/microsoft-prod.repo
+
+    - name: Install PowerShell Core on RHEL/CentOS 7 and 8
+      package:
+        name:
+          - powershell
+
+    - name: Ensure PowerShell module management tools are available
+      command: pwsh -Command "Install-Module -Name VMware.PowerCLI"
+
+    - name: Verify if VMware PowerCLI is installed
+      shell: |
+        pwsh -Command "& { Get-InstalledModule | Where-Object Name -eq 'VMware.PowerCLI' }"
+      register: powercli_check
+
+    - debug:
+        msg: "VMware PowerCLI has been successfully installed."
+      when: "'PowerShellGet' in powercli_check.stdout"
