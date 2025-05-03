@@ -1,0 +1,6 @@
+- name: Restart a service
+  ansible.windows.win_service:
+    name: spooler
+    state: restarted
+    username: Administrator@dns01.edge2go.group
+    password: Gsx1100f
