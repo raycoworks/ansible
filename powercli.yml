@@ -1,1 +1,32 @@
+---
+- name: Install PowerShell and VMware PowerCLI
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install PowerShell (Linux)
+      apt:
+        name: powershell
+        state: present
+      when: ansible_os_family == "Debian"
 
+    - name: Install PowerShell (RedHat)
+      yum:
+        name: powershell
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install PowerShell (macOS)
+      homebrew:
+        name: powershell
+        state: present
+      when: ansible_os_family == "Darwin"
+
+    - name: Install PowerCLI module for PowerShell
+      shell: pwsh -Command "Install-Module -Name VMware.PowerCLI -Force -Scope AllUsers -AllowClobber"
+      args:
+        creates: /usr/local/share/powershell/Modules/VMware.PowerCLI
+      become: yes
+      environment:
+        # Accept PowerCLI EULA automatically
+        POWERSHELL_TELEMETRY_OPTOUT: "1"
+      when: ansible_os_family in ["Debian", "RedHat", "Darwin"]
