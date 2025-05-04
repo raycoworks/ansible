@@ -1,1 +1,29 @@
-
+name: semaphore-gui-collections
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip>=21.0
+  - pyqt=5.15.7  # GUI framework
+  - pytest>=7.0.0  # Testing framework
+  - flake8>=4.0.1  # Linting
+  - black>=22.3.0  # Code formatting
+  - pyyaml>=6.0  # YAML file handling
+  - numpy>=1.22.0  # Numerical operations
+  - pandas>=1.4.0  # Data manipulation
+  - matplotlib>=3.5.0  # Plotting and visualization
+  - pyserial>=3.5  # Serial communication for hardware interfaces
+  - requests>=2.27.0  # HTTP requests
+  - pillow>=9.0.0  # Image processing
+  - setuptools>=60.0.0
+  - pip:
+    - semaphore-core>=1.0.0  # Core Semaphore library
+    - qtawesome>=1.1.0  # Icons for Qt
+    - pyqtgraph>=0.12.0  # Fast data visualization
+    - jsonschema>=4.0.0  # JSON schema validation
+    - pydantic>=1.9.0  # Data validation
+    - typer>=0.4.0  # CLI interface
+    - rich>=11.0.0  # Rich text and formatting in terminal
+    - watchdog>=2.1.0  # File system monitoring
+    - appdirs>=1.4.4  # App directories management
